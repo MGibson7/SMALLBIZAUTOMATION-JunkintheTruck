@@ -1,0 +1,85 @@
+#Where you are sourcing info from. Can Add additional contacts via excel file at any time without updating code
+import pandas as pd
+#Change out excel file below in same format (excel file must be saved in JunkInTheTrunk folder) #Company names and numbers removed for privacy/proprietary reasons
+contractors_dict = {'MG Hauling':{'Number': '336-777-7777', 'Ability': 'MEDIUM'}, 'Junk in Truck':
+    {'Number':'336-777-7777', 'Ability': 'LARGE'}, 'Junk R Us':
+    {'Number':'336-777-7777', 'Ability': 'SMALL'}}
+
+contractor_list = list(contractors_dict)
+
+#Twilio Info for SMS Messaging, your computer must be connected to wifi
+#IF PROGRAM NOT WORKING CHECK TO SEE IF AUTHTOKEN HAS EXPIRED ON TWILIO #Twilio Account info removed for security reasons 
+from twilio.rest import Client
+accountSID = '*******************************'
+authToken = '********************************'
+twilioCli = Client(accountSID, authToken)
+myTwilioNumber = 'NUMBERHERE'
+
+#Input from Arnold
+confirmation = ""
+while confirmation != 'YES':
+    job_type = input("Hello, what skill level do you need for this job? SMALL, MEDIUM, or LARGE?")
+    job_link = input("Please Copy and paste the link to this job. After pasting link hit space bar then enter")
+    job_description = ("Junk in the Truck LLC has a new opportunity!")
+    confirmation = input("Does everything look okay? YES or NO")
+    confirmation = confirmation.strip().upper()
+
+#Pulling info from matching abilities to send texts to correct groups
+job_ability = job_type.strip().upper()
+job_link = job_link.strip()
+job_description = job_description.strip()
+contractors = len(contractor_list)
+print(contractors)
+x = 0
+if job_ability == 'LARGE':
+    while contractors > 0:
+        contractor = contractor_list[x]
+        if (contractors_dict[contractor]['Ability']).upper() == 'LARGE':
+            cell_phone = (contractors_dict[contractor]['Number'])
+            try:
+                message = twilioCli.messages.create(body=f'{job_description} {job_link}', from_=myTwilioNumber, to=cell_phone)
+                print(f"text sent to {contractor_list[x]}, {cell_phone}")
+            except:
+                print(f"Unable to send to {contractor_list[x]}, {cell_phone} number not verified on Twilio")
+            contractors = contractors - 1
+            x = x + 1
+        else:
+            contractors = contractors - 1
+            x = x + 1
+elif job_ability == 'MEDIUM':
+    while contractors > 0:
+        contractor = contractor_list[x]
+        if (contractors_dict[contractor]['Ability']).upper() == 'LARGE':
+            cell_phone = (contractors_dict[contractor]['Number'])
+            try:
+                message = twilioCli.messages.create(body=f'{job_description} {job_link}', from_=myTwilioNumber, to=cell_phone)
+                print(f"text sent to {contractor_list[x]}, {cell_phone}")
+            except:
+                print(f"Unable to send to {contractor_list[x]}, {cell_phone} number not verified")
+            contractors = contractors - 1
+            x = x + 1
+        elif (contractors_dict[contractor]['Ability']).upper() == 'MEDIUM':
+            cell_phone = (contractors_dict[contractor]['Number'])
+            try:
+                message = twilioCli.messages.create(body=f'{job_description} {job_link}', from_=myTwilioNumber, to=cell_phone)
+                print(f"text sent to {contractor_list[x]}, {cell_phone}")
+            except:
+                print(f"Unable to send to {contractor_list[x]}, {cell_phone} number not verified")
+            contractors = contractors - 1
+            x = x + 1
+        else:
+            contractors = contractors - 1
+            x = x + 1
+elif job_ability == 'SMALL':
+    while contractors > 0:
+        contractor = contractor_list[x]
+        cell_phone = (contractors_dict[contractor]['Number'])
+        try:
+            message = twilioCli.messages.create(body=f'{job_description} {job_link}', from_=myTwilioNumber, to=cell_phone)
+            print(f"text sent to {contractor_list[x]}, {cell_phone}")
+        except:
+            print(f"Unable to send to {contractor_list[x]}, {cell_phone} number not verified")
+        contractors = contractors - 1
+        x = x + 1
+else:
+    print("No texts sent, be sure you specified a correct job type")
