@@ -1,4 +1,4 @@
-#Where you are sourcing info from. Can Add additional contacts via excel file at any time without updating code
+#Where you are sourcing info from. Can Add additional contacts via dictionary at any time without updating code
 import pandas as pd
 #Change out excel file below in same format (excel file must be saved in JunkInTheTrunk folder) #Company names and numbers removed for privacy/proprietary reasons
 contractors_dict = {'MG Hauling':{'Number': '336-777-7777', 'Ability': 'MEDIUM'}, 'Junk in Truck':
